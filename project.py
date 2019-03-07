@@ -114,6 +114,11 @@ def gconnect():
     login_session['email'] = data['email']
 
     # See if a user exists, if it doesn't make a new one
+    user_id = getUserID(login_session['email'])
+    if not user_id:
+      user_id = createUser(login_session)
+    login_session['user_id'] = user_id
+
 
     output = ''
     output += '<h1>Welcome, '
@@ -210,7 +215,10 @@ def restaurantsJSON():
 @app.route('/restaurant/')
 def showRestaurants():
     restaurants = session.query(Restaurant).order_by(asc(Restaurant.name))
-    return render_template('restaurants.html', restaurants=restaurants)
+    if 'username' not in login_session:
+        return render_template('publicrestaurants.html', restaurants=restaurants)
+    else:
+        return render_template('restaurants.html', restaurants=restaurants)
 
 # Create a new restaurant
 
@@ -250,10 +258,11 @@ def editRestaurant(restaurant_id):
 # Delete a restaurant
 @app.route('/restaurant/<int:restaurant_id>/delete/', methods=['GET', 'POST'])
 def deleteRestaurant(restaurant_id):
+    restaurantToDelete = session.query(Restaurant).filter_by(id=restaurant_id).one()
     if 'username' not in login_session:
         return redirect('/login')
-    restaurantToDelete = session.query(
-        Restaurant).filter_by(id=restaurant_id).one()
+    if restaurantToDelete.user_id != login_session['user_id']:
+        return "<script>function myFunction() {alert('You are not authorized to delete this restaurant.')}</script><body onload='myFunction()'>"
     if request.method == 'POST':
         session.delete(restaurantToDelete)
         flash('%s Successfully Deleted' % restaurantToDelete.name)
@@ -269,9 +278,13 @@ def deleteRestaurant(restaurant_id):
 @app.route('/restaurant/<int:restaurant_id>/menu/')
 def showMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id=restaurant_id).one()
+    creator = getUserInfo(restaurant.user_id)
     items = session.query(MenuItem).filter_by(
         restaurant_id=restaurant_id).all()
-    return render_template('menu.html', items=items, restaurant=restaurant)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('publicmenu.html', items = items, restaurant = restaurant, creator = creator)
+    else:
+        return render_template('menu.html', items=items, restaurant=restaurant, creator = creator)
 
 
 # Create a new menu item
