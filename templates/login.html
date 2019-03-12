@@ -12,16 +12,16 @@
 </head>
 
 
-<body>  
+<body>
 
 
 <!-- GOOGLE PLUS SIGN IN-->
 
-          
+
           <div id="signinButton">
           <span class="g-signin"
             data-scope="openid email"
-            data-clientid="712741751344-4hncfk9t203l9erff9kqavj90ggcp9ma.apps.googleusercontent.com""
+            data-clientid="712741751344-4hncfk9t203l9erff9kqavj90ggcp9ma.apps.googleusercontent.com"
             data-redirecturi="postmessage"
             data-accesstype="offline"
             data-cookiepolicy="single_host_origin"
@@ -51,14 +51,12 @@ function signInCallback(authResult) {
          setTimeout(function() {
           window.location.href = "/restaurant";
          }, 4000);
-          
       } else if (authResult['error']) {
     console.log('There was an error: ' + authResult['error']);
   } else {
         $('#result').html('Failed to make a server-side call. Check your configuration and console.');
          }
       }
-      
   }); } }
 </script>
 
@@ -71,10 +69,10 @@ function signInCallback(authResult) {
   window.fbAsyncInit = function() {
   FB.init({
     appId      : '214256235826759',
-    cookie     : true,  // enable cookies to allow the server to access 
+    cookie     : true,  // enable cookies to allow the server to access
                         // the session
     xfbml      : true,  // parse social plugins on this page
-    version    : 'v2.2' // use version 2.2
+    version    : 'v2.8' // use version 2.8
   });
   };
   // Load the SDK asynchronously
@@ -106,12 +104,10 @@ function signInCallback(authResult) {
          setTimeout(function() {
           window.location.href = "/restaurant";
          }, 4000);
-          
       } else {
         $('#result').html('Failed to make a server-side call. Check your configuration and console.');
          }
       }
-      
   });
     });
   }
@@ -119,7 +115,7 @@ function signInCallback(authResult) {
 
 
 <button>
-         
+
 
           <fb:login-button scope="public_profile,email" onlogin="sendTokenToServer();">
 <a href='javascript:sendTokenToServer()'>Login with Facebook</a>
